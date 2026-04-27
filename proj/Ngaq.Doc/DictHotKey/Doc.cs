@@ -32,6 +32,17 @@ using Tsinswreng.CsCore;
 		- 查詞執行細節
 	]
 
+	#H[Android通知入口層][
+		{{nameof(Ngaq.Android.MainActivity)}}
+		負責:
+		- 發佈常駐通知（ongoing notification）。
+		- 監聽通知點擊意圖並觸發查詞動作。
+
+		不直接處理:
+		- 字典頁導航細節
+		- 查詞執行細節
+	]
+
 	#H[通用業務層][
 		{{nameof(Ngaq.Ui.Views.Dictionary.IHotkeyDictionaryLookupAction)}} /
 		{{nameof(Ngaq.Ui.Views.Dictionary.HotkeyDictionaryLookupAction)}}
@@ -54,6 +65,7 @@ using Tsinswreng.CsCore;
 ]
 
 #H[執行流程][
+	#H[Windows路徑][
 	1. 用戶按下全局快捷鍵。
 	2. {{nameof(Ngaq.Windows.Domains.Hotkey.WinGlobalHotkeyRegistrar)}} 接收事件並喚起主窗口。
 	3. 調用 {{nameof(Ngaq.Ui.Views.Dictionary.HotkeyDictionaryLookupAction.Run)}}。
@@ -61,11 +73,22 @@ using Tsinswreng.CsCore;
 	5. 調用 {{nameof(Ngaq.Ui.Views.Dictionary.SvcDictionaryHotkeyNavigator.OpenDictionary)}}。
 	6. 回到首頁並切到字典標簽。
 	7. 文本非空時，觸發 {{nameof(Ngaq.Ui.Views.Dictionary.ViewDictionary.ClickLookupBtn)}} 查詞。
+	]
+
+	#H[Android路徑][
+	1. 用戶點擊常駐通知。
+	2. {{nameof(Ngaq.Android.MainActivity)}} 收到通知意圖。
+	3. 調用 {{nameof(Ngaq.Ui.Views.Dictionary.HotkeyDictionaryLookupAction.Run)}}。
+	4. 讀取剪貼板文本。
+	5. 調用 {{nameof(Ngaq.Ui.Views.Dictionary.SvcDictionaryHotkeyNavigator.OpenDictionary)}}。
+	6. 回到首頁並切到字典標簽。
+	7. 文本非空時，觸發 {{nameof(Ngaq.Ui.Views.Dictionary.ViewDictionary.ClickLookupBtn)}} 查詞。
+	]
 ]
 
 #H[當前約束][
 	- 快捷鍵查詞會優先保留首頁底欄體驗，不再通過 `ToolView` 額外包裝字典頁。
-	- 剪貼板服務保持接口抽象，實際實現在 {{nameof(Ngaq.Ui.SvcClipboard)}}。
+	- 剪貼板服務保持接口抽象；Windows/Avalonia 由 {{nameof(Ngaq.Ui.SvcClipboard)}} 實現，Android 由 {{nameof(Ngaq.Android.Domains.Clipboard.AndroidSvcClipboard)}} 實現。
 ]
 
 """)]
