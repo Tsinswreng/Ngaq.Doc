@@ -20,7 +20,8 @@ using Tsinswreng.CsCore;
 
 #H[職責分層][
 	#H[平台註冊層][
-		{{nameof(Ngaq.Windows.Domains.Hotkey.WinGlobalHotkeyRegistrar)}}
+		{{nameof(Ngaq.Windows.Domains.Hotkey.WinGlobalHotkeyRegistrar)}} /
+		{{nameof(Ngaq.Linux.Domains.Hotkey.LinuxGlobalHotkeyRegistrar)}}
 		只負責:
 		- 從配置解析快捷鍵。
 		- 向 {{nameof(Ngaq.Core.Frontend.Hotkey.IHotkeyListener)}} 註冊熱鍵。
@@ -66,6 +67,9 @@ using Tsinswreng.CsCore;
 
 #H[執行流程][
 	#H[Windows路徑][
+	0. 啓動時由 {{nameof(Ngaq.Windows.Domains.Hotkey.WinGlobalHotkeyRegistrar)}} 讀取配置並註冊熱鍵。
+	0. 註冊委託給 {{nameof(Ngaq.Windows.Domains.Hotkey.WinHotkeyListener)}}。
+	0. 監聽器使用專用 Win32 消息線程，同時處理註冊工作隊列與 `WM_HOTKEY`，避免 AOT 發佈時因消息循環提前阻塞而卡住啓動。
 	1. 用戶按下全局快捷鍵。
 	2. {{nameof(Ngaq.Windows.Domains.Hotkey.WinGlobalHotkeyRegistrar)}} 接收事件並喚起主窗口。
 	3. 調用 {{nameof(Ngaq.Ui.Views.Dictionary.HotkeyDictionaryLookupAction.Run)}}。
@@ -73,6 +77,12 @@ using Tsinswreng.CsCore;
 	5. 調用 {{nameof(Ngaq.Ui.Views.Dictionary.SvcDictionaryHotkeyNavigator.OpenDictionary)}}。
 	6. 回到首頁並切到字典標簽。
 	7. 文本非空時，觸發 {{nameof(Ngaq.Ui.Views.Dictionary.ViewDictionary.ClickLookupBtn)}} 查詞。
+	]
+
+	#H[Linux路徑][
+	1. 啓動時由 {{nameof(Ngaq.Linux.Domains.Hotkey.LinuxGlobalHotkeyRegistrar)}} 讀取配置並註冊熱鍵。
+	2. 註冊委託給 {{nameof(Ngaq.Linux.Domains.Hotkey.LinuxHotkeyListener)}}。
+	3. 監聽器通過 X11 `XGrabKey` 註冊全局熱鍵並輪詢按鍵事件，命中後執行查詞回調。
 	]
 
 	#H[Android路徑][
@@ -89,10 +99,10 @@ using Tsinswreng.CsCore;
 #H[當前約束][
 	- 快捷鍵查詞會優先保留首頁底欄體驗，不再通過 `ToolView` 額外包裝字典頁。
 	- 剪貼板服務保持接口抽象；Windows/Avalonia 由 {{nameof(Ngaq.Ui.SvcClipboard)}} 實現，Android 由 {{nameof(Ngaq.Android.Domains.Clipboard.AndroidSvcClipboard)}} 實現。
+	- Linux 路徑依賴 X11/XWayland；純 Wayland 且無 XWayland 時，全局熱鍵註冊會失敗並返回錯誤。
 ]
 
 """)]
 file class _{
 	
 }
-
