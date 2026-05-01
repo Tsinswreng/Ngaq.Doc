@@ -8,6 +8,83 @@ using Tsinswreng.CsCore;
 	{{nameof(Ngaq.Backend.Domains.Dictionary.Svc.SvcDictionary)}}（後端）
 	與
 	{{nameof(Ngaq.Ui.Views.Dictionary.VmDictionary)}}（前端）協作完成。
+	其核心目標不是返回自由文本，
+	而是生成可被程序直接解析的結構化詞典結果，
+	以便後續直接轉為單詞對象並進入詞庫流程。
+]
+
+#H[請求與響應契約][
+	查詞請求使用
+	{{nameof(Ngaq.Core.Shared.Dictionary.Models.IReqLlmDict)}}，
+	其核心內容包含查詢詞、
+	可選的上下文句子、
+	源語言、
+	目標語言列表以及若干偏好選項。
+
+	其中，
+	`Query` 用於描述本次要查的詞與消歧語境；
+	`OptLang` 用於描述源語言與目標語言；
+	`Preferences` 用於描述是否傾向包含例句、
+	近義詞、
+	詞源等附加信息。
+
+	模型響應最終會被解析為
+	{{nameof(Ngaq.Core.Shared.Dictionary.Models.IRespLlmDict)}}，
+	目前保留三類核心字段：
+	規範化後的詞頭、
+	讀音列表、
+	釋義列表。
+	這一結構保持足夠通用，
+	便於支撐任意語對查詞。
+]
+
+#H[語言配置持久化][
+	當前源語言與當前目標語言由
+	{{nameof(Ngaq.Backend.Domains.Dictionary.Svc.SvcDictionary)}}
+	經由鍵值存儲保存。
+	若用戶尚未設置，
+	系統會初始化為英文作為源語言、
+	中文作為目標語言。
+
+	語言配置在保存前會被規整，
+	包括補全所有者、
+	清理首尾空白、
+	以及在缺省時回退到 BCP 47 類型。
+	這使查詞頁在重新打開時可以延續上次的語言選擇，
+	避免每次重新配置。
+]
+
+#H[流式查詞流程][
+	後端調用大模型接口時，
+	統一以流式方式讀取 SSE 響應。
+	即使調用方本身不顯式要求流式回調，
+	後端也會先按流式方式接收模型輸出，
+	再在內部拼接為完整文本。
+
+	當讀取到新的內容片段時，
+	會經由
+	{{nameof(Ngaq.Core.Shared.Dictionary.Models.IReqLlmDictEvt)}}
+	上的回調逐段通知前端。
+	這使前端可以邊接收邊展示，
+	減少用戶等待完整結果後再一次性刷新的停頓感。
+]
+
+#H[YamlMd 輸出約定與寬容解析][
+	模型並不直接返回 JSON，
+	而是返回 YamlMd 文本。
+	此格式在頂部放置 yaml 代碼塊，
+	再使用 markdown 一級標題加代碼塊承載多行長文本，
+	從而減少多行內容在 JSON 或普通 YAML 中的大量轉義與縮進負擔。
+
+	後端解析時使用
+	{{nameof(Tsinswreng.CsYamlMd.ExtnYamlMd.TryToYamlLenient)}}。
+	除了正常的 YamlMd 之外，
+	還會寬容處理兩類常見偏差：
+	其一是模型把整段 YamlMd 又額外包進一層 markdown 代碼塊；
+	其二是模型在正文末尾追加結論性解釋文本。
+	只要核心結構仍可識別，
+	系統就盡量完成解析，
+	以提高查詞成功率。
 ]
 
 #H[解析失敗處理約定][
