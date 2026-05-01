@@ -88,17 +88,19 @@ using Tsinswreng.CsCore;
 	#H[Android路徑][
 	1. 用戶點擊常駐通知。
 	2. {{nameof(Ngaq.Android.MainActivity)}} 收到通知意圖。
-	3. 調用 {{nameof(Ngaq.Ui.Views.Dictionary.HotkeyDictionaryLookupAction.Run)}}。
-	4. 讀取剪貼板文本。
-	5. 調用 {{nameof(Ngaq.Ui.Views.Dictionary.SvcDictionaryHotkeyNavigator.OpenDictionary)}}。
-	6. 回到首頁並切到字典標簽。
-	7. 文本非空時，觸發 {{nameof(Ngaq.Ui.Views.Dictionary.ViewDictionary.ClickLookupBtn)}} 查詞。
+	3. 若 Activity 尚未拿到窗口焦點，先掛起查詞請求。
+	4. 拿到窗口焦點後，調用 {{nameof(Ngaq.Ui.Views.Dictionary.HotkeyDictionaryLookupAction.Run)}}。
+	5. 讀取剪貼板文本。
+	6. 調用 {{nameof(Ngaq.Ui.Views.Dictionary.SvcDictionaryHotkeyNavigator.OpenDictionary)}}。
+	7. 回到首頁並切到字典標簽。
+	8. 文本非空時，觸發 {{nameof(Ngaq.Ui.Views.Dictionary.ViewDictionary.ClickLookupBtn)}} 查詞。
 	]
 ]
 
 #H[當前約束][
 	- 快捷鍵查詞會優先保留首頁底欄體驗，不再通過 `ToolView` 額外包裝字典頁。
 	- 剪貼板服務保持接口抽象；Windows/Avalonia 由 {{nameof(Ngaq.Ui.SvcClipboard)}} 實現，Android 由 {{nameof(Ngaq.Android.Domains.Clipboard.AndroidSvcClipboard)}} 實現。
+	- Android 通知查詞必須等 Activity 拿到窗口焦點後再讀剪貼板，否則新系統版本上可能因系統剪貼板限制拿到空值。
 	- Linux 路徑依賴 X11/XWayland；純 Wayland 且無 XWayland 時，全局熱鍵註冊會失敗並返回錯誤。
 ]
 

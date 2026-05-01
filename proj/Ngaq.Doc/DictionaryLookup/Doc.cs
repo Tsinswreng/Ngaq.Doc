@@ -24,6 +24,20 @@ using Tsinswreng.CsCore;
 	查看與編輯原始響應後重解析。
 ]
 
+#H[查詞頁首屏與語言按鈕][
+	{{nameof(Ngaq.Ui.Views.Dictionary.ViewDictionary)}} 的源/目標語言按鈕
+	顯示格式為 `語言代碼 + UI 語言下的譯名`
+	如 `en 英語`、`zh 中文`。
+
+	譯名來源為
+	{{nameof(Ngaq.Core.Shared.Word.Svc.ISvcNormLang.BatGetTranslatedName)}}。
+
+	另:
+	- 搜索按鈕位於輸入框左側。
+	- 未查詞前，輸入框顯示 placeholder。
+	- 未查詞前，結果區顯示灰色用法提示，而不是空白。
+]
+
 """)]
 file class _{
 	
