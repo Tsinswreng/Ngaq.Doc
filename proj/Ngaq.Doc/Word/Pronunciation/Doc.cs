@@ -45,6 +45,19 @@ using Tsinswreng.CsCore;
 	避免重複下載。
 ]
 
+#H[平臺播放實現][
+	播放端經由
+	{{nameof(Ngaq.Core.Shared.Audio.IAudioPlayer)}}
+	抽象分發到各平臺實作。
+
+	當前約定為:
+	- Windows 使用 NAudio，並在部分情況下回退到系統原生播放路徑。
+	- Linux 把音頻寫入暫存文件後，調用系統現成命令行播放器。
+	- Android 使用系統
+	`MediaPlayer`
+	播放暫存音頻文件。
+]
+
 #H[跨頁面復用][
 	單詞發音能力不是詞典頁私有功能。
 	在

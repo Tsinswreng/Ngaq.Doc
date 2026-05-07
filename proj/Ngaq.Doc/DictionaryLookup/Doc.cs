@@ -19,14 +19,16 @@ using Tsinswreng.CsCore;
 	其核心內容包含查詢詞、
 	可選的上下文句子、
 	源語言、
-	目標語言列表以及若干偏好選項。
+	目標語言列表以及若干預留偏好字段。
 
 	其中，
 	`Query` 用於描述本次要查的詞與消歧語境；
 	`OptLang` 用於描述源語言與目標語言；
-	`Preferences` 用於描述是否傾向包含例句、
+	`Preferences` 目前主要作為協議預留字段，
+	用於為例句、
 	近義詞、
-	詞源等附加信息。
+	詞源等附加信息保留擴展位置，
+	當前實現尚未實際驅動查詞生成邏輯。
 
 	模型響應最終會被解析為
 	{{nameof(Ngaq.Core.Shared.Dictionary.Models.IRespLlmDict)}}，
@@ -72,6 +74,7 @@ using Tsinswreng.CsCore;
 #H[YamlMd 輸出約定與寬容解析][
 	模型並不直接返回 JSON，
 	而是返回 YamlMd 文本。
+	YamlMd 是本系統為查詞輸出自行設計並命名的一種混合格式。
 	此格式在頂部放置 yaml 代碼塊，
 	再使用 markdown 一級標題加代碼塊承載多行長文本，
 	從而減少多行內容在 JSON 或普通 YAML 中的大量轉義與縮進負擔。
@@ -113,6 +116,8 @@ using Tsinswreng.CsCore;
 	- 搜索按鈕位於輸入框左側。
 	- 未查詞前，輸入框顯示 placeholder。
 	- 未查詞前，結果區顯示灰色用法提示，而不是空白。
+	- 收藏按鈕在已有查詞結果時，會把結果轉成 {{nameof(Ngaq.Ui.Views.Word.WordEditV2.ViewWordEditV2)}} 草稿。
+	- 若尚未查詞，點收藏按鈕則直接進入自由加詞頁，並預填當前源語言。
 ]
 
 """)]

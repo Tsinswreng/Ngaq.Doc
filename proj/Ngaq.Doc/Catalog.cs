@@ -19,6 +19,10 @@ using Tsinswreng.CsCore;
 	StudyPlan 前端
 ]
 
+#H[{{nameof(Ngaq.Doc.Word.UserWordManage)}}][
+	用戶詞庫管理前端
+]
+
 #H[{{nameof(Ngaq.Doc.Word.JsWeightPlugin)}}][
 	自定義 js 權重算法插件格式
 ]
