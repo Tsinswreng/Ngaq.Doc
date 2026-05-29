@@ -24,6 +24,15 @@ using Tsinswreng.CsCore;
 
 	若本地尚無當前用戶，
 	系統會自動生成新的本地用戶標識並寫入鍵值存儲。
+
+	依賴
+	{{nameof(Ngaq.Backend.Di.DiLocalFrontend)}}
+	的本地 token storage 回歸測試，
+	屬於客戶端專用本地後端測試，
+	不應放在公共
+	`Ngaq.Backend.Test`
+	程序集內，
+	以免 Server 測試裝配公共後端測試時誤帶入前端專用依賴。
 ]
 
 #H[註冊與登錄頁][

@@ -9,6 +9,7 @@ using Tsinswreng.CsCore;
 	- 計算權重並生成學習順序。
 	- 接收用戶對單詞的記得 / 忘記標記。
 	- 保存學習結果並開始下一輪排序。
+	- 提供從首頁底欄與「我的」頁快捷卡片進入背單詞頁的入口。
 ]
 
 #H[加載流程][
@@ -27,6 +28,15 @@ using Tsinswreng.CsCore;
 
 	界面以不同顏色表示不同學習狀態，
 	並同步刷新當前單詞信息區。
+
+	單詞信息區中的每一條
+	{{nameof(Ngaq.Core.Shared.Word.Models.Po.Kv.PoWordProp)}}
+	右上角都提供編輯圖標。
+	點擊後會直接跳轉到
+	{{nameof(Ngaq.Ui.Views.Word.WordEditV2.ViewWordEditV2)}}
+	並打開對應的既有屬性編輯框。
+	description 也按 WordProp 對待，
+	不再只是純文本展示。
 ]
 
 #H[保存與重算][

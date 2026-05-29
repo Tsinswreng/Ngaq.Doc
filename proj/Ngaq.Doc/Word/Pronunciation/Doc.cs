@@ -68,6 +68,19 @@ using Tsinswreng.CsCore;
 	中可作為背單詞卡片的自動朗讀能力被調用。
 ]
 
+#H[信息頁展示規則][
+	在
+	{{nameof(Ngaq.Ui.Views.Word.WordInfo.ViewWordInfo)}}
+	中，
+	若
+	`KStr = pronunciation`
+	且值為 JSON，
+	則僅展示其中的
+	`Text`
+	字段，
+	避免把原始結構直接暴露到 UI。
+]
+
 """)]
 file class _{
 	

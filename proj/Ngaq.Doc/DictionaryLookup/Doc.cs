@@ -30,6 +30,20 @@ using Tsinswreng.CsCore;
 	詞源等附加信息保留擴展位置，
 	當前實現尚未實際驅動查詞生成邏輯。
 
+	前端在構造查詞請求時，
+	應盡量補齊
+	`OptLang.SrcLang`
+	與
+	`OptLang.TgtLangs`
+	中的
+	`Code` /
+	`NativeName` /
+	`EnglishName`。
+	其中 `Code` 爲必填，
+	後兩者雖不直接作爲數據庫主鍵，
+	但可幫助後端構造更穩定、可讀性更高的 LLM prompt，
+	避免只把裸語言代碼傳給模型。
+
 	模型響應最終會被解析為
 	{{nameof(Ngaq.Core.Shared.Dictionary.Models.IRespLlmDict)}}，
 	目前保留三類核心字段：
@@ -69,6 +83,19 @@ using Tsinswreng.CsCore;
 	上的回調逐段通知前端。
 	這使前端可以邊接收邊展示，
 	減少用戶等待完整結果後再一次性刷新的停頓感。
+
+	送入大模型的用戶提示詞
+	不應直接把
+	{{nameof(Ngaq.Core.Shared.Dictionary.Models.IReqLlmDict)}}
+	序列化成 JSON 後原樣透傳，
+	而應整理為面向查詞任務的自然語言說明，
+	至少明確：
+	查詢詞、
+	可選語境、
+	源語言、
+	目標語言、
+	偏好配置、
+	以及輸出必須爲可解析的 YamlMd。
 ]
 
 #H[YamlMd 輸出約定與寬容解析][
